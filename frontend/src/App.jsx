@@ -8,6 +8,7 @@ import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
 import CoursesDashboard from './pages/CoursesDashboard';
 import CourseDetail from './pages/CourseDetail';
+import QuizTaking from './pages/QuizTaking';
 import { Box, CssBaseline } from '@mui/material';
 import { isSupabaseConfigured } from './utils/supabase';
 import { theme } from './theme/theme';
@@ -42,6 +43,14 @@ const AppContent = () => {
           element={
             <ProtectedRoute>
               <CourseDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/quiz/:quizId"
+          element={
+            <ProtectedRoute>
+              <QuizTaking />
             </ProtectedRoute>
           }
         />

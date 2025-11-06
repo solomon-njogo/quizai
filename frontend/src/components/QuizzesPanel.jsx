@@ -12,14 +12,17 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import QuizIcon from '@mui/icons-material/Quiz';
+import AddIcon from '@mui/icons-material/Add';
 import { getQuizzes, deleteQuiz } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
+import CreateQuizDialog from './CreateQuizDialog';
 
 const QuizzesPanel = ({ courseId }) => {
   const navigate = useNavigate();
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   useEffect(() => {
     if (courseId) {
@@ -56,12 +59,32 @@ const QuizzesPanel = ({ courseId }) => {
     }
   };
 
+  const handleCreateSuccess = (quiz) => {
+    // Refresh quiz list after successful creation
+    loadQuizzes();
+  };
+
   return (
     <Box sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h6" sx={{ color: '#FFFFFF', fontWeight: 600 }}>
           Quizzes
         </Typography>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => setCreateDialogOpen(true)}
+          size="small"
+          sx={{
+            backgroundColor: '#4FC3F7',
+            color: '#FFFFFF',
+            '&:hover': {
+              backgroundColor: '#3FB0E0',
+            },
+          }}
+        >
+          Create Quiz
+        </Button>
       </Box>
 
       {error && (
@@ -92,7 +115,7 @@ const QuizzesPanel = ({ courseId }) => {
                 },
               }}
               onClick={() => {
-                // Navigate to quiz detail if needed
+                navigate(`/quiz/${quiz.id}`);
               }}
               secondaryAction={
                 <IconButton
@@ -125,6 +148,13 @@ const QuizzesPanel = ({ courseId }) => {
           ))}
         </List>
       )}
+
+      <CreateQuizDialog
+        open={createDialogOpen}
+        courseId={courseId}
+        onClose={() => setCreateDialogOpen(false)}
+        onSuccess={handleCreateSuccess}
+      />
     </Box>
   );
 };
