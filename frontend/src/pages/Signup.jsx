@@ -1,15 +1,16 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
+  Box,
   Container,
   Paper,
   TextField,
   Button,
   Typography,
-  Box,
   Alert,
-  CircularProgress,
+  Link as MuiLink,
 } from '@mui/material';
+import { supabase } from '../utils/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
 const Signup = () => {
@@ -18,14 +19,18 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signup } = useAuth();
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Redirect if already logged in
+  if (user) {
+    navigate('/', { replace: true });
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    // Validation
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -39,169 +44,98 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      const { error } = await signup(email, password);
-      if (error) {
-        setError(error.message || 'Failed to create account');
-      } else {
-        navigate('/');
-      }
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      // Show success message and redirect to login
+      alert('Sign up successful! Please check your email to verify your account.');
+      navigate('/login', { replace: true });
     } catch (err) {
-      setError('An unexpected error occurred');
+      setError(err.message || 'An error occurred during sign up');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#F7F7F7',
-        py: { xs: 4, sm: 8 },
-        px: { xs: 2, sm: 0 },
-      }}
-    >
-      <Container component="main" maxWidth="sm">
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Typography
-            component="h1"
-            variant="h3"
-            sx={{
-              mb: 1,
-              fontWeight: 700,
-              color: '#1CB0F6',
-              textAlign: 'center',
-              fontSize: { xs: '1.75rem', sm: '2.125rem', md: '3rem' },
-            }}
-          >
-            Start your journey!
+    <Container component="main" maxWidth="xs">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Paper elevation={3} sx={{ padding: 4, width: '100%' }}>
+          <Typography component="h1" variant="h5" align="center" gutterBottom>
+            Sign Up
           </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              mb: 4,
-              color: '#6B7280',
-              textAlign: 'center',
-              fontSize: { xs: '0.875rem', sm: '1rem' },
-              px: { xs: 2, sm: 0 },
-            }}
-          >
-            Create an account to begin learning with QuizAI
-          </Typography>
-          <Paper
-            elevation={0}
-            sx={{
-              padding: { xs: 3, sm: 5 },
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              width: '100%',
-              borderRadius: 4,
-              border: '1px solid #E5E7EB',
-              backgroundColor: '#FFFFFF',
-            }}
-          >
-            {error && (
-              <Alert
-                severity="error"
-                sx={{
-                  width: '100%',
-                  mb: 3,
-                  borderRadius: 2,
-                }}
-              >
-                {error}
-              </Alert>
-            )}
-            <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={loading}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="new-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={loading}
-                helperText="Must be at least 6 characters"
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="confirmPassword"
-                label="Confirm Password"
-                type="password"
-                id="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={loading}
-                sx={{ mb: 3 }}
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                size="large"
-                disabled={loading}
-                sx={{
-                  py: 1.5,
-                  mb: 3,
-                  fontSize: '1.125rem',
-                  fontWeight: 600,
-                  borderRadius: 2,
-                }}
-              >
-                {loading ? <CircularProgress size={24} color="inherit" /> : 'Create Account'}
-              </Button>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="body2" sx={{ color: '#6B7280' }}>
-                  Already have an account?{' '}
-                  <Link
-                    to="/login"
-                    style={{
-                      textDecoration: 'none',
-                      color: '#1CB0F6',
-                      fontWeight: 600,
-                    }}
-                  >
-                    Sign In
-                  </Link>
-                </Typography>
-              </Box>
+          {error && (
+            <Alert severity="error" sx={{ mt: 2, mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="confirmPassword"
+              label="Confirm Password"
+              type="password"
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              disabled={loading}
+            >
+              {loading ? 'Signing Up...' : 'Sign Up'}
+            </Button>
+            <Box sx={{ textAlign: 'center', mt: 2 }}>
+              <MuiLink component={Link} to="/login" variant="body2">
+                Already have an account? Sign In
+              </MuiLink>
             </Box>
-          </Paper>
-        </Box>
-      </Container>
-    </Box>
+          </Box>
+        </Paper>
+      </Box>
+    </Container>
   );
 };
 
 export default Signup;
+

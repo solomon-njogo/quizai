@@ -7,7 +7,7 @@ import { supabase } from '../utils/supabase.js';
  * @param {Array} questions - Array of question objects
  * @returns {Promise<{data: Object|null, error: string|null}>}
  */
-export async function createQuiz(userId, title, questions) {
+export async function createQuiz(userId, title, questions, courseId = null) {
   try {
     // Validate input
     if (!userId || !title || !questions) {
@@ -35,13 +35,20 @@ export async function createQuiz(userId, title, questions) {
       }
     }
 
+    const insertData = {
+      user_id: userId,
+      title: title.trim(),
+      questions: questions
+    };
+
+    // Add course_id if provided
+    if (courseId) {
+      insertData.course_id = courseId;
+    }
+
     const { data, error } = await supabase
       .from('quizzes')
-      .insert({
-        user_id: userId,
-        title: title.trim(),
-        questions: questions
-      })
+      .insert(insertData)
       .select()
       .single();
 
@@ -117,6 +124,11 @@ export async function getUserQuizzes(userId, options = {}) {
       .from('quizzes')
       .select('*')
       .eq('user_id', userId);
+
+    // Filter by course_id if provided
+    if (options.courseId !== undefined && options.courseId !== null) {
+      query = query.eq('course_id', options.courseId);
+    }
 
     // Apply ordering (default: newest first)
     const orderBy = options.orderBy || 'created_at';

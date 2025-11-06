@@ -25,7 +25,8 @@ router.get('/', async (req, res) => {
       limit: req.query.limit ? parseInt(req.query.limit) : undefined,
       offset: req.query.offset ? parseInt(req.query.offset) : undefined,
       orderBy: req.query.orderBy || 'created_at',
-      orderDirection: req.query.orderDirection || 'desc'
+      orderDirection: req.query.orderDirection || 'desc',
+      courseId: req.query.course_id || undefined
     };
 
     const { data, error } = await getUserCourseMaterials(userId, options);

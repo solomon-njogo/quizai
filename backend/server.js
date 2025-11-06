@@ -6,6 +6,7 @@ import uploadRoutes from './routes/upload.js';
 import quizRoutes from './routes/quizzes.js';
 import submitRoutes from './routes/submit.js';
 import courseMaterialRoutes from './routes/courseMaterials.js';
+import courseRoutes from './routes/courses.js';
 
 dotenv.config();
 
@@ -38,6 +39,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/submit', submitRoutes);
 app.use('/api/course-materials', courseMaterialRoutes);
+app.use('/api/courses', courseRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {

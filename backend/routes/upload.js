@@ -98,7 +98,8 @@ router.post(
           filePath: storageData.storagePath,
           fileSize: fileSize,
           mimeType: mimeType,
-          extractedText: text
+          extractedText: text,
+          courseId: req.body.course_id || null
         },
         accessToken
       );

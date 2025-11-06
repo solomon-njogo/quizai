@@ -42,7 +42,7 @@ function createAuthenticatedClient(accessToken) {
  */
 export async function createCourseMaterial(userId, materialData, accessToken = null) {
   try {
-    const { filename, originalFilename, filePath, fileSize, mimeType, extractedText } = materialData;
+    const { filename, originalFilename, filePath, fileSize, mimeType, extractedText, courseId } = materialData;
 
     if (!userId || !filename || !originalFilename || !filePath || !fileSize || !mimeType) {
       return {
@@ -54,17 +54,24 @@ export async function createCourseMaterial(userId, materialData, accessToken = n
     // Use authenticated client if token is provided, otherwise fall back to service role
     const client = accessToken ? createAuthenticatedClient(accessToken) : supabase;
 
+    const insertData = {
+      user_id: userId,
+      filename: filename,
+      original_filename: originalFilename,
+      file_path: filePath,
+      file_size: fileSize,
+      mime_type: mimeType,
+      extracted_text: extractedText || null
+    };
+
+    // Add course_id if provided
+    if (courseId) {
+      insertData.course_id = courseId;
+    }
+
     const { data, error } = await client
       .from('course_materials')
-      .insert({
-        user_id: userId,
-        filename: filename,
-        original_filename: originalFilename,
-        file_path: filePath,
-        file_size: fileSize,
-        mime_type: mimeType,
-        extracted_text: extractedText || null
-      })
+      .insert(insertData)
       .select()
       .single();
 
@@ -140,6 +147,11 @@ export async function getUserCourseMaterials(userId, options = {}) {
       .from('course_materials')
       .select('*')
       .eq('user_id', userId);
+
+    // Filter by course_id if provided
+    if (options.courseId !== undefined && options.courseId !== null) {
+      query = query.eq('course_id', options.courseId);
+    }
 
     // Apply ordering (default: newest first)
     const orderBy = options.orderBy || 'created_at';

@@ -1,23 +1,17 @@
 import axios from 'axios';
-import { supabase } from './supabase.js';
+import { supabase } from './supabase';
 
-// Get API base URL from environment variable
-// In development, Vite proxy will handle /api requests
-// In production, use VITE_API_URL env variable
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
-
-// Create axios instance with default config
+// Create axios instance with base configuration
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor for adding auth tokens if needed
+// Add request interceptor to include auth token
 api.interceptors.request.use(
   async (config) => {
-    // Get current session from Supabase
     const { data: { session } } = await supabase.auth.getSession();
     if (session?.access_token) {
       config.headers.Authorization = `Bearer ${session.access_token}`;
@@ -29,83 +23,89 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor for error handling
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    // Handle common errors
-    if (error.response?.status === 401) {
-      // Unauthorized - sign out user
-      await supabase.auth.signOut();
-      // Redirect to login will be handled by ProtectedRoute component
-    }
-    return Promise.reject(error);
-  }
-);
-
-// API endpoints
-export const healthCheck = () => api.get('/api/health');
-
-// Course Materials API
-export const getCourseMaterials = (params = {}) => {
-  const queryParams = new URLSearchParams();
-  if (params.limit) queryParams.append('limit', params.limit);
-  if (params.offset) queryParams.append('offset', params.offset);
-  if (params.orderBy) queryParams.append('orderBy', params.orderBy);
-  if (params.orderDirection) queryParams.append('orderDirection', params.orderDirection);
-  
-  const queryString = queryParams.toString();
-  return api.get(`/api/course-materials${queryString ? `?${queryString}` : ''}`);
+// Course API functions
+export const getCourses = async () => {
+  const response = await api.get('/courses');
+  return response.data;
 };
 
-export const getCourseMaterial = (id) => api.get(`/api/course-materials/${id}`);
+export const getCourse = async (id) => {
+  const response = await api.get(`/courses/${id}`);
+  return response.data;
+};
 
-export const getCourseMaterialDownloadUrl = (id, expiresIn = 3600) => 
-  api.get(`/api/course-materials/${id}/download?expiresIn=${expiresIn}`);
+export const createCourse = async (data) => {
+  const response = await api.post('/courses', data);
+  return response.data;
+};
 
-export const updateCourseMaterial = (id, data) => 
-  api.put(`/api/course-materials/${id}`, data);
+export const updateCourse = async (id, data) => {
+  const response = await api.put(`/courses/${id}`, data);
+  return response.data;
+};
 
-export const deleteCourseMaterial = (id) => 
-  api.delete(`/api/course-materials/${id}`);
+export const deleteCourse = async (id) => {
+  const response = await api.delete(`/courses/${id}`);
+  return response.data;
+};
 
-// File Upload API (for course materials)
-export const uploadFile = (file, onUploadProgress) => {
+// Course Materials API functions
+export const getCourseMaterials = async (courseId = null) => {
+  const params = courseId ? { course_id: courseId } : {};
+  const response = await api.get('/course-materials', { params });
+  return response.data;
+};
+
+export const getCourseMaterial = async (id) => {
+  const response = await api.get(`/course-materials/${id}`);
+  return response.data;
+};
+
+export const uploadCourseMaterial = async (file, courseId = null) => {
   const formData = new FormData();
   formData.append('file', file);
-  
-  return api.post('/api/upload', formData, {
+  if (courseId) {
+    formData.append('course_id', courseId);
+  }
+  const response = await api.post('/upload', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
-    onUploadProgress: (progressEvent) => {
-      if (onUploadProgress && progressEvent.total) {
-        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-        onUploadProgress(percentCompleted);
-      }
-    },
   });
+  return response.data;
 };
 
-// Quiz API
-export const getQuizzes = (params = {}) => {
-  const queryParams = new URLSearchParams();
-  if (params.limit) queryParams.append('limit', params.limit);
-  if (params.offset) queryParams.append('offset', params.offset);
-  if (params.orderBy) queryParams.append('orderBy', params.orderBy);
-  if (params.orderDirection) queryParams.append('orderDirection', params.orderDirection);
-  
-  const queryString = queryParams.toString();
-  return api.get(`/api/quizzes${queryString ? `?${queryString}` : ''}`);
+export const deleteCourseMaterial = async (id) => {
+  const response = await api.delete(`/course-materials/${id}`);
+  return response.data;
 };
 
-export const getQuiz = (id) => api.get(`/api/quizzes/${id}`);
+// Quiz API functions
+export const getQuizzes = async (courseId = null) => {
+  const params = courseId ? { course_id: courseId } : {};
+  const response = await api.get('/quizzes', { params });
+  return response.data;
+};
 
-export const createQuiz = (data) => api.post('/api/quizzes', data);
+export const getQuiz = async (id) => {
+  const response = await api.get(`/quizzes/${id}`);
+  return response.data;
+};
 
-export const updateQuiz = (id, data) => api.put(`/api/quizzes/${id}`, data);
+export const createQuiz = async (data) => {
+  const response = await api.post('/quizzes', data);
+  return response.data;
+};
 
-export const deleteQuiz = (id) => api.delete(`/api/quizzes/${id}`);
+export const updateQuiz = async (id, data) => {
+  const response = await api.put(`/quizzes/${id}`, data);
+  return response.data;
+};
 
-// Export the api instance for custom requests
+export const deleteQuiz = async (id) => {
+  const response = await api.delete(`/quizzes/${id}`);
+  return response.data;
+};
+
 export default api;
+

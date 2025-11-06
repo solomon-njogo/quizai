@@ -6,7 +6,8 @@ import SupabaseConfigError from './components/SupabaseConfigError';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
-import NotebookLayout from './components/NotebookLayout';
+import CoursesDashboard from './pages/CoursesDashboard';
+import CourseDetail from './pages/CourseDetail';
 import { Box, CssBaseline } from '@mui/material';
 import { isSupabaseConfigured } from './utils/supabase';
 import { theme } from './theme/theme';
@@ -31,7 +32,15 @@ const AppContent = () => {
           path="/"
           element={
             <ProtectedRoute>
-              <NotebookLayout />
+              <CoursesDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/courses/:courseId"
+          element={
+            <ProtectedRoute>
+              <CourseDetail />
             </ProtectedRoute>
           }
         />

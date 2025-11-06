@@ -1,12 +1,12 @@
 import express from 'express';
 import { authenticateToken } from '../middleware/auth.js';
 import {
-  createQuiz,
-  getQuiz,
-  getUserQuizzes,
-  updateQuiz,
-  deleteQuiz
-} from '../services/quizStorage.js';
+  createCourse,
+  getCourse,
+  getUserCourses,
+  updateCourse,
+  deleteCourse
+} from '../services/courseService.js';
 
 const router = express.Router();
 
@@ -14,8 +14,8 @@ const router = express.Router();
 router.use(authenticateToken);
 
 /**
- * GET /api/quizzes
- * Get all quizzes for the authenticated user
+ * GET /api/courses
+ * Get all courses for the authenticated user
  * Query params: limit, offset, orderBy, orderDirection
  */
 router.get('/', async (req, res) => {
@@ -25,177 +25,175 @@ router.get('/', async (req, res) => {
       limit: req.query.limit ? parseInt(req.query.limit) : undefined,
       offset: req.query.offset ? parseInt(req.query.offset) : undefined,
       orderBy: req.query.orderBy || 'created_at',
-      orderDirection: req.query.orderDirection || 'desc',
-      courseId: req.query.course_id || undefined
+      orderDirection: req.query.orderDirection || 'desc'
     };
 
-    const { data, error } = await getUserQuizzes(userId, options);
+    const { data, error } = await getUserCourses(userId, options);
 
     if (error) {
       return res.status(400).json({
-        error: 'Failed to fetch quizzes',
+        error: 'Failed to fetch courses',
         message: error
       });
     }
 
     return res.json({
       success: true,
-      quizzes: data,
+      courses: data,
       count: data.length
     });
   } catch (error) {
-    console.error('Get quizzes error:', error);
+    console.error('Get courses error:', error);
     return res.status(500).json({
       error: 'Internal server error',
-      message: 'Failed to fetch quizzes'
+      message: 'Failed to fetch courses'
     });
   }
 });
 
 /**
- * GET /api/quizzes/:id
- * Get a single quiz by ID
+ * GET /api/courses/:id
+ * Get a single course by ID
  */
 router.get('/:id', async (req, res) => {
   try {
-    const quizId = req.params.id;
+    const courseId = req.params.id;
     const userId = req.user.id;
 
-    const { data, error } = await getQuiz(quizId, userId);
+    const { data, error } = await getCourse(courseId, userId);
 
     if (error) {
-      if (error === 'Quiz not found') {
+      if (error === 'Course not found') {
         return res.status(404).json({
           error: 'Not found',
           message: error
         });
       }
       return res.status(400).json({
-        error: 'Failed to fetch quiz',
+        error: 'Failed to fetch course',
         message: error
       });
     }
 
     return res.json({
       success: true,
-      quiz: data
+      course: data
     });
   } catch (error) {
-    console.error('Get quiz error:', error);
+    console.error('Get course error:', error);
     return res.status(500).json({
       error: 'Internal server error',
-      message: 'Failed to fetch quiz'
+      message: 'Failed to fetch course'
     });
   }
 });
 
 /**
- * POST /api/quizzes
- * Create a new quiz
- * Body: { title: string, questions: Array }
+ * POST /api/courses
+ * Create a new course
+ * Body: { name: string }
  */
 router.post('/', async (req, res) => {
   try {
     const userId = req.user.id;
-    const { title, questions, course_id } = req.body;
+    const { name } = req.body;
 
     // Validate required fields
-    if (!title || !questions) {
+    if (!name) {
       return res.status(400).json({
         error: 'Validation error',
-        message: 'Title and questions are required'
+        message: 'Name is required'
       });
     }
 
-    const { data, error } = await createQuiz(userId, title, questions, course_id || null);
+    const { data, error } = await createCourse(userId, name);
 
     if (error) {
       return res.status(400).json({
-        error: 'Failed to create quiz',
+        error: 'Failed to create course',
         message: error
       });
     }
 
     return res.status(201).json({
       success: true,
-      quiz: data,
-      message: 'Quiz created successfully'
+      course: data,
+      message: 'Course created successfully'
     });
   } catch (error) {
-    console.error('Create quiz error:', error);
+    console.error('Create course error:', error);
     return res.status(500).json({
       error: 'Internal server error',
-      message: 'Failed to create quiz'
+      message: 'Failed to create course'
     });
   }
 });
 
 /**
- * PUT /api/quizzes/:id
- * Update an existing quiz
- * Body: { title?: string, questions?: Array }
+ * PUT /api/courses/:id
+ * Update an existing course
+ * Body: { name?: string }
  */
 router.put('/:id', async (req, res) => {
   try {
-    const quizId = req.params.id;
+    const courseId = req.params.id;
     const userId = req.user.id;
-    const { title, questions } = req.body;
+    const { name } = req.body;
 
     // Validate that at least one field is provided
-    if (!title && !questions) {
+    if (!name) {
       return res.status(400).json({
         error: 'Validation error',
-        message: 'At least one field (title or questions) must be provided'
+        message: 'Name must be provided'
       });
     }
 
     const updates = {};
-    if (title !== undefined) updates.title = title;
-    if (questions !== undefined) updates.questions = questions;
+    if (name !== undefined) updates.name = name;
 
-    const { data, error } = await updateQuiz(quizId, userId, updates);
+    const { data, error } = await updateCourse(courseId, userId, updates);
 
     if (error) {
-      if (error === 'Quiz not found or unauthorized') {
+      if (error === 'Course not found or unauthorized') {
         return res.status(404).json({
           error: 'Not found',
           message: error
         });
       }
       return res.status(400).json({
-        error: 'Failed to update quiz',
+        error: 'Failed to update course',
         message: error
       });
     }
 
     return res.json({
       success: true,
-      quiz: data,
-      message: 'Quiz updated successfully'
+      course: data,
+      message: 'Course updated successfully'
     });
   } catch (error) {
-    console.error('Update quiz error:', error);
+    console.error('Update course error:', error);
     return res.status(500).json({
       error: 'Internal server error',
-      message: 'Failed to update quiz'
+      message: 'Failed to update course'
     });
   }
 });
 
 /**
- * DELETE /api/quizzes/:id
- * Delete a quiz
+ * DELETE /api/courses/:id
+ * Delete a course
  */
 router.delete('/:id', async (req, res) => {
   try {
-    const quizId = req.params.id;
+    const courseId = req.params.id;
     const userId = req.user.id;
 
-    const { success, error } = await deleteQuiz(quizId, userId);
+    const { success, error } = await deleteCourse(courseId, userId);
 
     if (error) {
       return res.status(400).json({
-        error: 'Failed to delete quiz',
+        error: 'Failed to delete course',
         message: error
       });
     }
@@ -203,19 +201,19 @@ router.delete('/:id', async (req, res) => {
     if (!success) {
       return res.status(404).json({
         error: 'Not found',
-        message: 'Quiz not found or unauthorized'
+        message: 'Course not found or unauthorized'
       });
     }
 
     return res.json({
       success: true,
-      message: 'Quiz deleted successfully'
+      message: 'Course deleted successfully'
     });
   } catch (error) {
-    console.error('Delete quiz error:', error);
+    console.error('Delete course error:', error);
     return res.status(500).json({
       error: 'Internal server error',
-      message: 'Failed to delete quiz'
+      message: 'Failed to delete course'
     });
   }
 });
