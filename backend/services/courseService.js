@@ -134,6 +134,18 @@ export async function getUserCourses(userId, options = {}) {
       // Continue with 0 counts if there's an error
     }
 
+    // Get quizzes count for all courses in a single query
+    const { data: quizzesData, error: quizzesError } = await supabase
+      .from('quizzes')
+      .select('course_id')
+      .in('course_id', courseIds)
+      .eq('user_id', userId);
+
+    if (quizzesError) {
+      console.error('Error fetching quizzes count:', quizzesError);
+      // Continue with 0 counts if there's an error
+    }
+
     // Count materials per course
     const materialsCountMap = {};
     if (materialsData) {
@@ -144,10 +156,21 @@ export async function getUserCourses(userId, options = {}) {
       });
     }
 
-    // Transform the data to include materials_count
+    // Count quizzes per course
+    const quizzesCountMap = {};
+    if (quizzesData) {
+      quizzesData.forEach(quiz => {
+        if (quiz.course_id) {
+          quizzesCountMap[quiz.course_id] = (quizzesCountMap[quiz.course_id] || 0) + 1;
+        }
+      });
+    }
+
+    // Transform the data to include materials_count and quizzes_count
     const transformedData = courses.map(course => ({
       ...course,
-      materials_count: materialsCountMap[course.id] || 0
+      materials_count: materialsCountMap[course.id] || 0,
+      quizzes_count: quizzesCountMap[course.id] || 0
     }));
 
     return { data: transformedData, error: null };

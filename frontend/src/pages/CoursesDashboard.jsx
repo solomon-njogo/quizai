@@ -134,9 +134,11 @@ const CoursesDashboard = () => {
     }
   };
 
-  // Get source count for a course
-  const getSourceCount = (course) => {
-    return course.materials_count || 0;
+  // Get formatted counts string for a course
+  const getCountsString = (course) => {
+    const sourcesCount = course.materials_count || 0;
+    const quizzesCount = course.quizzes_count || 0;
+    return `${sourcesCount} source${sourcesCount !== 1 ? 's' : ''} • ${quizzesCount} quiz${quizzesCount !== 1 ? 'zes' : ''}`;
   };
 
   const recentCourses = courses.slice(0, 8); // Show first 8 as recent
@@ -445,7 +447,7 @@ const CoursesDashboard = () => {
                               {formatDate(course.created_at)}
                             </Typography>
                             <Typography variant="body2" sx={{ color: '#B0B0B0', fontSize: '0.8125rem' }}>
-                              {getSourceCount(course)} sources
+                              {getCountsString(course)}
                             </Typography>
                           </Box>
                         </Box>
@@ -532,7 +534,7 @@ const CoursesDashboard = () => {
                         {course.name}
                       </Typography>
                       <Typography variant="body2" sx={{ color: '#B0B0B0', fontSize: '0.8125rem' }}>
-                        {formatDate(course.created_at)} • {getSourceCount(course)} sources
+                        {formatDate(course.created_at)} • {getCountsString(course)}
                       </Typography>
                     </Box>
                     <IconButton
