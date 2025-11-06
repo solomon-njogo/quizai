@@ -5,23 +5,23 @@
   box-sizing: border-box;
 }
 
-/* Custom scrollbar styling */
+/* Custom scrollbar styling for dark theme */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #F9FAFB;
+  background: #1A1A1A;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #D1D5DB;
+  background: #404040;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9CA3AF;
+  background: #505050;
 }
 
 /* Smooth transitions for layout components */
@@ -33,4 +33,9 @@
 .notebook-content {
   overflow: hidden;
   position: relative;
+}
+
+/* Remove any gradient backgrounds */
+* {
+  background-image: none !important;
 }

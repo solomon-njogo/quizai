@@ -35,7 +35,7 @@ const NotebookLayout = () => {
         height: '100vh',
         width: '100%',
         overflow: 'hidden',
-        backgroundColor: '#F7F7F7',
+        backgroundColor: '#1A1A1A',
       }}
     >
       {/* Top Navigation Bar */}
@@ -43,8 +43,8 @@ const NotebookLayout = () => {
         position="static"
         elevation={0}
         sx={{
-          backgroundColor: '#FFFFFF',
-          borderBottom: '1px solid #E5E7EB',
+          backgroundColor: '#1A1A1A',
+          borderBottom: '1px solid #333333',
           flexShrink: 0,
         }}
       >
@@ -54,7 +54,7 @@ const NotebookLayout = () => {
             component="div"
             sx={{
               fontWeight: 700,
-              color: '#1CB0F6',
+              color: '#4FC3F7',
               fontSize: { xs: '1.25rem', sm: '1.5rem' },
               cursor: 'pointer',
             }}
@@ -67,9 +67,10 @@ const NotebookLayout = () => {
               sx={{
                 width: { xs: 32, sm: 36 },
                 height: { xs: 32, sm: 36 },
-                bgcolor: '#1CB0F6',
+                bgcolor: '#4FC3F7',
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 fontWeight: 600,
+                color: '#FFFFFF',
               }}
             >
               {user?.email?.charAt(0).toUpperCase()}
@@ -81,12 +82,12 @@ const NotebookLayout = () => {
                 borderRadius: 2,
                 px: { xs: 1.5, sm: 2 },
                 py: 0.75,
-                borderColor: '#E5E7EB',
-                color: '#1F2937',
+                borderColor: '#505050',
+                color: '#FFFFFF',
                 fontSize: { xs: '0.875rem', sm: '1rem' },
                 '&:hover': {
-                  borderColor: '#1CB0F6',
-                  backgroundColor: 'rgba(28, 176, 246, 0.08)',
+                  borderColor: '#4FC3F7',
+                  backgroundColor: 'rgba(79, 195, 247, 0.08)',
                 },
               }}
             >
@@ -113,14 +114,14 @@ const NotebookLayout = () => {
             maxWidth: leftPanelCollapsed ? 0 : { xs: '100%', sm: '100%', md: '320px' },
             display: { xs: leftPanelCollapsed ? 'none' : 'flex', sm: leftPanelCollapsed ? 'none' : 'flex', md: 'flex' },
             flexDirection: 'column',
-            borderRight: { xs: 'none', sm: 'none', md: '1px solid #E5E7EB' },
-            backgroundColor: '#FFFFFF',
+            borderRight: { xs: 'none', sm: 'none', md: '1px solid #333333' },
+            backgroundColor: '#242424',
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             overflow: 'hidden',
             position: { xs: 'absolute', sm: 'absolute', md: 'relative' },
             zIndex: { xs: 10, sm: 10, md: 1 },
             height: { xs: '100%', sm: '100%', md: 'auto' },
-            boxShadow: { xs: leftPanelCollapsed ? 'none' : '2px 0 8px rgba(0,0,0,0.1)', sm: leftPanelCollapsed ? 'none' : '2px 0 8px rgba(0,0,0,0.1)', md: 'none' },
+            boxShadow: { xs: leftPanelCollapsed ? 'none' : '2px 0 8px rgba(0,0,0,0.3)', sm: leftPanelCollapsed ? 'none' : '2px 0 8px rgba(0,0,0,0.3)', md: 'none' },
           }}
         >
           <CourseMaterialsPanel onClose={() => setLeftPanelCollapsed(true)} />
@@ -135,23 +136,25 @@ const NotebookLayout = () => {
             top: '50%',
             transform: 'translateY(-50%)',
             zIndex: 20,
-            backgroundColor: '#FFFFFF',
-            border: '1px solid #E5E7EB',
+            backgroundColor: '#242424',
+            border: '1px solid #333333',
             borderRadius: '0 8px 8px 0',
             width: 24,
             height: 48,
             minWidth: 24,
             padding: 0,
             display: { xs: 'none', md: 'flex' },
+            color: '#FFFFFF',
             '&:hover': {
-              backgroundColor: '#F9FAFB',
+              backgroundColor: '#2A2A2A',
+              borderColor: '#4FC3F7',
             },
           }}
         >
           {leftPanelCollapsed ? (
-            <ChevronRightIcon sx={{ fontSize: 20, color: '#6B7280' }} />
+            <ChevronRightIcon sx={{ fontSize: 20 }} />
           ) : (
-            <ChevronLeftIcon sx={{ fontSize: 20, color: '#6B7280' }} />
+            <ChevronLeftIcon sx={{ fontSize: 20 }} />
           )}
         </IconButton>
 
@@ -162,7 +165,7 @@ const NotebookLayout = () => {
             display: { xs: leftPanelCollapsed ? 'flex' : 'none', sm: leftPanelCollapsed ? 'flex' : 'none', md: 'flex' },
             flexDirection: 'column',
             overflow: 'hidden',
-            backgroundColor: '#FFFFFF',
+            backgroundColor: '#1A1A1A',
             minWidth: 0,
           }}
         >
@@ -179,21 +182,23 @@ const NotebookLayout = () => {
               top: '50%',
               transform: 'translateY(-50%)',
               zIndex: 20,
-              backgroundColor: '#FFFFFF',
-              border: '1px solid #E5E7EB',
+              backgroundColor: '#242424',
+              border: '1px solid #333333',
               borderRadius: '0 8px 8px 0',
               width: 32,
               height: 48,
               minWidth: 32,
               padding: 0,
               display: { xs: 'flex', sm: 'flex', md: 'none' },
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+              color: '#FFFFFF',
               '&:hover': {
-                backgroundColor: '#F9FAFB',
+                backgroundColor: '#2A2A2A',
+                borderColor: '#4FC3F7',
               },
             }}
           >
-            <ChevronRightIcon sx={{ fontSize: 20, color: '#6B7280' }} />
+            <ChevronRightIcon sx={{ fontSize: 20 }} />
           </IconButton>
         )}
       </Box>

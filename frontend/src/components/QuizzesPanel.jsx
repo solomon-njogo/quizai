@@ -57,44 +57,69 @@ const QuizzesPanel = ({ courseId }) => {
   };
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h6">Quizzes</Typography>
+        <Typography variant="h6" sx={{ color: '#FFFFFF', fontWeight: 600 }}>
+          Quizzes
+        </Typography>
       </Box>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
+        <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }} onClose={() => setError(null)}>
           {error}
         </Alert>
       )}
 
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-          <CircularProgress />
+          <CircularProgress sx={{ color: '#4FC3F7' }} />
         </Box>
       ) : quizzes.length === 0 ? (
-        <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
+        <Typography variant="body2" sx={{ color: '#B0B0B0', textAlign: 'center', py: 4 }}>
           No quizzes created yet
         </Typography>
       ) : (
-        <List>
+        <List sx={{ flex: 1, overflow: 'auto' }}>
           {quizzes.map((quiz) => (
             <ListItem
               key={quiz.id}
+              sx={{
+                borderRadius: 2,
+                mb: 1,
+                cursor: 'pointer',
+                '&:hover': {
+                  backgroundColor: 'rgba(79, 195, 247, 0.08)',
+                },
+              }}
+              onClick={() => {
+                // Navigate to quiz detail if needed
+              }}
               secondaryAction={
                 <IconButton
                   edge="end"
                   aria-label="delete"
-                  onClick={() => handleDelete(quiz.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(quiz.id);
+                  }}
                   size="small"
+                  sx={{ color: '#FFFFFF' }}
                 >
                   <DeleteIcon />
                 </IconButton>
               }
             >
               <ListItemText
-                primary={quiz.title}
-                secondary={`${quiz.questions?.length || 0} questions • ${new Date(quiz.created_at).toLocaleDateString()}`}
+                primary={
+                  <Typography sx={{ color: '#FFFFFF', fontSize: '0.875rem' }}>
+                    {quiz.title}
+                  </Typography>
+                }
+                secondary={
+                  <Typography sx={{ color: '#B0B0B0', fontSize: '0.75rem' }}>
+                    {quiz.questions?.length || 0} questions • {new Date(quiz.created_at).toLocaleDateString()}
+                  </Typography>
+                }
               />
             </ListItem>
           ))}

@@ -152,16 +152,16 @@ const FileUpload = ({ onUploadSuccess, onCancel }) => {
           onDragOver={handleDragOver}
           onDrop={handleDrop}
           sx={{
-            border: '2px dashed #D1D5DB',
-            borderRadius: 3,
+            border: '2px dashed #505050',
+            borderRadius: 2,
             p: { xs: 3, sm: 4 },
             textAlign: 'center',
-            backgroundColor: '#F9FAFB',
+            backgroundColor: '#242424',
             cursor: 'pointer',
             transition: 'all 0.2s ease-in-out',
             '&:hover': {
-              borderColor: '#1CB0F6',
-              backgroundColor: '#F0F9FF',
+              borderColor: '#4FC3F7',
+              backgroundColor: '#2A2A2A',
             },
           }}
           onClick={() => fileInputRef.current?.click()}
@@ -169,14 +169,14 @@ const FileUpload = ({ onUploadSuccess, onCancel }) => {
           <CloudUploadIcon
             sx={{
               fontSize: { xs: 48, sm: 64 },
-              color: '#9CA3AF',
+              color: '#B0B0B0',
               mb: 2,
             }}
           />
           <Typography
             variant="h6"
             sx={{
-              color: '#1F2937',
+              color: '#FFFFFF',
               mb: 1,
               fontWeight: 600,
               fontSize: { xs: '1rem', sm: '1.125rem' },
@@ -187,7 +187,7 @@ const FileUpload = ({ onUploadSuccess, onCancel }) => {
           <Typography
             variant="body2"
             sx={{
-              color: '#6B7280',
+              color: '#B0B0B0',
               mb: 2,
               fontSize: { xs: '0.875rem', sm: '1rem' },
             }}
@@ -202,6 +202,12 @@ const FileUpload = ({ onUploadSuccess, onCancel }) => {
               borderRadius: 2,
               px: 3,
               py: 1,
+              borderColor: '#505050',
+              color: '#FFFFFF',
+              '&:hover': {
+                borderColor: '#4FC3F7',
+                backgroundColor: 'rgba(79, 195, 247, 0.08)',
+              },
             }}
           >
             Select File
@@ -215,9 +221,9 @@ const FileUpload = ({ onUploadSuccess, onCancel }) => {
             elevation={0}
             sx={{
               p: 3,
-              borderRadius: 3,
-              border: '1px solid #E5E7EB',
-              backgroundColor: '#FFFFFF',
+              borderRadius: 2,
+              border: '1px solid #333333',
+              backgroundColor: '#242424',
               mb: 2,
             }}
           >
@@ -234,7 +240,7 @@ const FileUpload = ({ onUploadSuccess, onCancel }) => {
                   variant="body1"
                   sx={{
                     fontWeight: 600,
-                    color: '#1F2937',
+                    color: '#FFFFFF',
                     mb: 0.5,
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -246,7 +252,7 @@ const FileUpload = ({ onUploadSuccess, onCancel }) => {
                 <Typography
                   variant="body2"
                   sx={{
-                    color: '#6B7280',
+                    color: '#B0B0B0',
                     fontSize: '0.875rem',
                   }}
                 >
@@ -263,9 +269,12 @@ const FileUpload = ({ onUploadSuccess, onCancel }) => {
                   }
                 }}
                 sx={{
-                  color: '#6B7280',
+                  color: '#B0B0B0',
                   minWidth: 'auto',
                   px: 1,
+                  '&:hover': {
+                    backgroundColor: 'rgba(79, 195, 247, 0.08)',
+                  },
                 }}
               >
                 Remove
@@ -280,16 +289,16 @@ const FileUpload = ({ onUploadSuccess, onCancel }) => {
                   sx={{
                     height: 8,
                     borderRadius: 4,
-                    backgroundColor: '#E5E7EB',
+                    backgroundColor: '#333333',
                     '& .MuiLinearProgress-bar': {
-                      backgroundColor: '#1CB0F6',
+                      backgroundColor: '#4FC3F7',
                     },
                   }}
                 />
                 <Typography
                   variant="body2"
                   sx={{
-                    color: '#6B7280',
+                    color: '#B0B0B0',
                     mt: 1,
                     textAlign: 'center',
                     fontSize: '0.875rem',
@@ -310,6 +319,12 @@ const FileUpload = ({ onUploadSuccess, onCancel }) => {
                     sx={{
                       borderRadius: 2,
                       py: 1.5,
+                      borderColor: '#505050',
+                      color: '#FFFFFF',
+                      '&:hover': {
+                        borderColor: '#4FC3F7',
+                        backgroundColor: 'rgba(79, 195, 247, 0.08)',
+                      },
                     }}
                   >
                     Cancel
@@ -337,9 +352,9 @@ const FileUpload = ({ onUploadSuccess, onCancel }) => {
           elevation={0}
           sx={{
             p: 3,
-            borderRadius: 3,
+            borderRadius: 2,
             border: '1px solid #10B981',
-            backgroundColor: '#F0FDF4',
+            backgroundColor: '#1A2E1A',
             textAlign: 'center',
           }}
         >
@@ -363,7 +378,7 @@ const FileUpload = ({ onUploadSuccess, onCancel }) => {
           <Typography
             variant="body2"
             sx={{
-              color: '#6B7280',
+              color: '#B0B0B0',
             }}
           >
             Your file has been uploaded and processed successfully.
@@ -379,6 +394,7 @@ const FileUpload = ({ onUploadSuccess, onCancel }) => {
           sx={{
             mt: 2,
             borderRadius: 2,
+            backgroundColor: '#2A1A1A',
           }}
         >
           {error}

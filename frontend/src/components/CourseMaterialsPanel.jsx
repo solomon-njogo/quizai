@@ -82,17 +82,28 @@ const CourseMaterialsPanel = ({ courseId }) => {
   };
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h6">Course Materials</Typography>
+        <Typography variant="h6" sx={{ color: '#FFFFFF', fontWeight: 600 }}>
+          Course Materials
+        </Typography>
         <Button
           variant="outlined"
           component="label"
           startIcon={<UploadFileIcon />}
           disabled={uploading}
           size="small"
+          sx={{
+            borderRadius: 2,
+            borderColor: '#505050',
+            color: '#FFFFFF',
+            '&:hover': {
+              borderColor: '#4FC3F7',
+              backgroundColor: 'rgba(79, 195, 247, 0.08)',
+            },
+          }}
         >
-          {uploading ? <CircularProgress size={20} /> : 'Upload'}
+          {uploading ? <CircularProgress size={20} sx={{ color: '#4FC3F7' }} /> : 'Upload'}
           <input
             type="file"
             hidden
@@ -103,38 +114,54 @@ const CourseMaterialsPanel = ({ courseId }) => {
       </Box>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
+        <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }} onClose={() => setError(null)}>
           {error}
         </Alert>
       )}
 
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-          <CircularProgress />
+          <CircularProgress sx={{ color: '#4FC3F7' }} />
         </Box>
       ) : materials.length === 0 ? (
-        <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
+        <Typography variant="body2" sx={{ color: '#B0B0B0', textAlign: 'center', py: 4 }}>
           No materials uploaded yet
         </Typography>
       ) : (
-        <List>
+        <List sx={{ flex: 1, overflow: 'auto' }}>
           {materials.map((material) => (
             <ListItem
               key={material.id}
+              sx={{
+                borderRadius: 2,
+                mb: 1,
+                '&:hover': {
+                  backgroundColor: 'rgba(79, 195, 247, 0.08)',
+                },
+              }}
               secondaryAction={
                 <IconButton
                   edge="end"
                   aria-label="delete"
                   onClick={() => handleDelete(material.id)}
                   size="small"
+                  sx={{ color: '#FFFFFF' }}
                 >
                   <DeleteIcon />
                 </IconButton>
               }
             >
               <ListItemText
-                primary={material.original_filename}
-                secondary={`${formatFileSize(material.file_size)} • ${new Date(material.created_at).toLocaleDateString()}`}
+                primary={
+                  <Typography sx={{ color: '#FFFFFF', fontSize: '0.875rem' }}>
+                    {material.original_filename}
+                  </Typography>
+                }
+                secondary={
+                  <Typography sx={{ color: '#B0B0B0', fontSize: '0.75rem' }}>
+                    {formatFileSize(material.file_size)} • {new Date(material.created_at).toLocaleDateString()}
+                  </Typography>
+                }
               />
             </ListItem>
           ))}

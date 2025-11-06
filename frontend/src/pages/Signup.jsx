@@ -69,14 +69,24 @@ const Signup = () => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          minHeight: '100vh',
         }}
       >
-        <Paper elevation={3} sx={{ padding: 4, width: '100%' }}>
-          <Typography component="h1" variant="h5" align="center" gutterBottom>
+        <Paper 
+          elevation={0} 
+          sx={{ 
+            padding: 4, 
+            width: '100%',
+            backgroundColor: '#242424',
+            border: '1px solid #333333',
+            borderRadius: 2,
+          }}
+        >
+          <Typography component="h1" variant="h5" align="center" gutterBottom sx={{ color: '#FFFFFF', fontWeight: 600 }}>
             Sign Up
           </Typography>
           {error && (
-            <Alert severity="error" sx={{ mt: 2, mb: 2 }}>
+            <Alert severity="error" sx={{ mt: 2, mb: 2, borderRadius: 2 }}>
               {error}
             </Alert>
           )}
@@ -120,13 +130,13 @@ const Signup = () => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, borderRadius: 2 }}
               disabled={loading}
             >
               {loading ? 'Signing Up...' : 'Sign Up'}
             </Button>
             <Box sx={{ textAlign: 'center', mt: 2 }}>
-              <MuiLink component={Link} to="/login" variant="body2">
+              <MuiLink component={Link} to="/login" variant="body2" sx={{ color: '#4FC3F7' }}>
                 Already have an account? Sign In
               </MuiLink>
             </Box>

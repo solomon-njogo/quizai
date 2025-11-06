@@ -48,54 +48,63 @@ const CourseDetail = () => {
           justifyContent: 'center',
           alignItems: 'center',
           minHeight: '100vh',
+          backgroundColor: '#1A1A1A',
         }}
       >
-        <CircularProgress />
+        <CircularProgress sx={{ color: '#4FC3F7' }} />
       </Box>
     );
   }
 
   if (error || !course) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error || 'Course not found'}
-        </Alert>
-        <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/')}>
-          Back to Dashboard
-        </Button>
-      </Container>
+      <Box sx={{ minHeight: '100vh', backgroundColor: '#1A1A1A', py: 4 }}>
+        <Container maxWidth="lg">
+          <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>
+            {error || 'Course not found'}
+          </Alert>
+          <Button 
+            startIcon={<ArrowBackIcon />} 
+            onClick={() => navigate('/')}
+            sx={{ color: '#FFFFFF' }}
+          >
+            Back to Dashboard
+          </Button>
+        </Container>
+      </Box>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ mb: 3 }}>
-        <Button
-          startIcon={<ArrowBackIcon />}
-          onClick={() => navigate('/')}
-          sx={{ mb: 2 }}
-        >
-          Back to Dashboard
-        </Button>
-        <Typography variant="h4" component="h1" fontWeight="bold">
-          {course.name}
-        </Typography>
-      </Box>
+    <Box sx={{ minHeight: '100vh', backgroundColor: '#1A1A1A', py: 4 }}>
+      <Container maxWidth="lg">
+        <Box sx={{ mb: 3 }}>
+          <Button
+            startIcon={<ArrowBackIcon />}
+            onClick={() => navigate('/')}
+            sx={{ mb: 2, color: '#FFFFFF' }}
+          >
+            Back to Dashboard
+          </Button>
+          <Typography variant="h4" component="h1" fontWeight="bold" sx={{ color: '#FFFFFF' }}>
+            {course.name}
+          </Typography>
+        </Box>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <Paper elevation={2}>
-            <CourseMaterialsPanel courseId={courseId} />
-          </Paper>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <Paper elevation={0} sx={{ border: '1px solid #333333' }}>
+              <CourseMaterialsPanel courseId={courseId} />
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Paper elevation={0} sx={{ border: '1px solid #333333' }}>
+              <QuizzesPanel courseId={courseId} />
+            </Paper>
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Paper elevation={2}>
-            <QuizzesPanel courseId={courseId} />
-          </Paper>
-        </Grid>
-      </Grid>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 

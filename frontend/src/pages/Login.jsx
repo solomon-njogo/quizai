@@ -55,14 +55,24 @@ const Login = () => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          minHeight: '100vh',
         }}
       >
-        <Paper elevation={3} sx={{ padding: 4, width: '100%' }}>
-          <Typography component="h1" variant="h5" align="center" gutterBottom>
+        <Paper 
+          elevation={0} 
+          sx={{ 
+            padding: 4, 
+            width: '100%',
+            backgroundColor: '#242424',
+            border: '1px solid #333333',
+            borderRadius: 2,
+          }}
+        >
+          <Typography component="h1" variant="h5" align="center" gutterBottom sx={{ color: '#FFFFFF', fontWeight: 600 }}>
             Sign In
           </Typography>
           {error && (
-            <Alert severity="error" sx={{ mt: 2, mb: 2 }}>
+            <Alert severity="error" sx={{ mt: 2, mb: 2, borderRadius: 2 }}>
               {error}
             </Alert>
           )}
@@ -95,18 +105,18 @@ const Login = () => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, borderRadius: 2 }}
               disabled={loading}
             >
               {loading ? 'Signing In...' : 'Sign In'}
             </Button>
             <Box sx={{ textAlign: 'center', mt: 2 }}>
-              <MuiLink component={Link} to="/signup" variant="body2">
+              <MuiLink component={Link} to="/signup" variant="body2" sx={{ color: '#4FC3F7' }}>
                 Don't have an account? Sign Up
               </MuiLink>
             </Box>
             <Box sx={{ textAlign: 'center', mt: 1 }}>
-              <MuiLink component={Link} to="/forgot-password" variant="body2">
+              <MuiLink component={Link} to="/forgot-password" variant="body2" sx={{ color: '#4FC3F7' }}>
                 Forgot password?
               </MuiLink>
             </Box>

@@ -15,7 +15,7 @@ const Home = () => {
       sx={{
         flex: 1,
         width: '100%',
-        backgroundColor: '#F7F7F7',
+        backgroundColor: '#1A1A1A',
         py: { xs: 3, sm: 6, md: 8 },
         px: { xs: 2, sm: 3, md: 4 },
         display: 'flex',
@@ -39,7 +39,7 @@ const Home = () => {
           sx={{
             mb: { xs: 1.5, sm: 2 },
             fontWeight: 700,
-            color: '#1CB0F6',
+            color: '#4FC3F7',
             textAlign: 'center',
             fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
           }}
@@ -50,7 +50,7 @@ const Home = () => {
           variant="h6"
           sx={{
             mb: { xs: 3, sm: 4 },
-            color: '#6B7280',
+            color: '#B0B0B0',
             textAlign: 'center',
             fontWeight: 400,
             fontSize: { xs: '1rem', sm: '1.25rem' },
@@ -68,9 +68,9 @@ const Home = () => {
             alignItems: 'center',
             width: '100%',
             maxWidth: '100%',
-            borderRadius: 4,
-            border: '1px solid #E5E7EB',
-            backgroundColor: '#FFFFFF',
+            borderRadius: 2,
+            border: '1px solid #333333',
+            backgroundColor: '#242424',
           }}
         >
           {user && (
@@ -78,7 +78,7 @@ const Home = () => {
               <Typography
                 variant="body1"
                 sx={{
-                  color: '#6B7280',
+                  color: '#B0B0B0',
                   mb: 1,
                   fontSize: { xs: '0.875rem', sm: '1rem' },
                 }}
@@ -88,7 +88,7 @@ const Home = () => {
               <Typography
                 variant="h6"
                 sx={{
-                  color: '#1F2937',
+                  color: '#FFFFFF',
                   fontWeight: 600,
                   mb: 3,
                   fontSize: { xs: '1rem', sm: '1.25rem' },
@@ -100,7 +100,7 @@ const Home = () => {
               <Typography
                 variant="body2"
                 sx={{
-                  color: '#6B7280',
+                  color: '#B0B0B0',
                   mb: 3,
                   fontSize: { xs: '0.875rem', sm: '1rem' },
                   px: { xs: 1, sm: 0 },
@@ -134,6 +134,12 @@ const Home = () => {
                       borderRadius: 2,
                       py: 1.5,
                       fontSize: { xs: '0.875rem', sm: '1rem' },
+                      borderColor: '#505050',
+                      color: '#FFFFFF',
+                      '&:hover': {
+                        borderColor: '#4FC3F7',
+                        backgroundColor: 'rgba(79, 195, 247, 0.08)',
+                      },
                     }}
                   >
                     Upload Material

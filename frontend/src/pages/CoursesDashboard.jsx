@@ -96,99 +96,129 @@ const CoursesDashboard = () => {
           justifyContent: 'center',
           alignItems: 'center',
           minHeight: '100vh',
+          backgroundColor: '#1A1A1A',
         }}
       >
-        <CircularProgress />
+        <CircularProgress sx={{ color: '#4FC3F7' }} />
       </Box>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h4" component="h1" fontWeight="bold">
-          My Courses
-        </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => setCreateDialogOpen(true)}
-          sx={{ minWidth: 150 }}
-        >
-          New Course
-        </Button>
-      </Box>
+    <Box sx={{ minHeight: '100vh', backgroundColor: '#1A1A1A', py: 4 }}>
+      <Container maxWidth="lg">
+        <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h4" component="h1" fontWeight="bold" sx={{ color: '#FFFFFF' }}>
+            My Courses
+          </Typography>
+        </Box>
 
-      <Grid container spacing={3}>
-        {courses.map((course) => (
-          <Grid item xs={12} sm={6} md={4} key={course.id}>
+        <Grid container spacing={3}>
+          {/* Create New Course Card */}
+          <Grid item xs={12} sm={6} md={4}>
             <Card
               sx={{
                 height: '100%',
+                minHeight: 200,
                 display: 'flex',
                 flexDirection: 'column',
-                transition: 'transform 0.2s, box-shadow 0.2s',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                backgroundColor: '#242424',
+                border: '1px solid #333333',
+                transition: 'all 0.2s ease',
                 '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: 4,
+                  borderColor: '#4FC3F7',
+                  backgroundColor: '#2A2A2A',
                 },
               }}
+              onClick={() => setCreateDialogOpen(true)}
             >
-              <CardActionArea
-                onClick={() => navigate(`/courses/${course.id}`)}
-                sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}
-              >
-                <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <FolderIcon sx={{ fontSize: 40, color: 'primary.main', mr: 1 }} />
-                    <Typography variant="h6" component="h2" sx={{ flex: 1 }}>
-                      {course.name}
-                    </Typography>
-                  </Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 'auto' }}>
-                    Created: {formatDate(course.created_at)}
-                  </Typography>
-                  {course.updated_at && (
-                    <Typography variant="body2" color="text.secondary">
-                      Updated: {formatDate(course.updated_at)}
-                    </Typography>
-                  )}
-                </CardContent>
-              </CardActionArea>
+              <CardContent sx={{ textAlign: 'center', p: 4 }}>
+                <AddIcon sx={{ fontSize: 64, color: '#4FC3F7', mb: 2 }} />
+                <Typography variant="h6" sx={{ color: '#FFFFFF', fontWeight: 500 }}>
+                  Create new course
+                </Typography>
+              </CardContent>
             </Card>
           </Grid>
-        ))}
 
-        {courses.length === 0 && (
-          <Grid item xs={12}>
-            <Box
-              sx={{
-                textAlign: 'center',
-                py: 8,
-                px: 2,
-              }}
-            >
-              <FolderIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
-              <Typography variant="h6" color="text.secondary" gutterBottom>
-                No courses yet
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                Create your first course to get started
-              </Typography>
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                onClick={() => setCreateDialogOpen(true)}
+          {/* Course Cards */}
+          {courses.map((course) => (
+            <Grid item xs={12} sm={6} md={4} key={course.id}>
+              <Card
+                sx={{
+                  height: '100%',
+                  minHeight: 200,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  backgroundColor: '#242424',
+                  border: '1px solid #333333',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    borderColor: '#4FC3F7',
+                    backgroundColor: '#2A2A2A',
+                  },
+                }}
               >
-                Create Course
-              </Button>
-            </Box>
-          </Grid>
-        )}
-      </Grid>
+                <CardActionArea
+                  onClick={() => navigate(`/courses/${course.id}`)}
+                  sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}
+                >
+                  <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', p: 3 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
+                      <FolderIcon sx={{ fontSize: 40, color: '#4FC3F7', mr: 1.5, mt: 0.5 }} />
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography variant="h6" component="h2" sx={{ color: '#FFFFFF', fontWeight: 500, mb: 1 }}>
+                          {course.name}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: '#B0B0B0', fontSize: '0.875rem' }}>
+                          {formatDate(course.created_at)}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
+          ))}
 
-      <Dialog open={createDialogOpen} onClose={() => setCreateDialogOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Create New Course</DialogTitle>
+          {courses.length === 0 && (
+            <Grid item xs={12}>
+              <Box
+                sx={{
+                  textAlign: 'center',
+                  py: 8,
+                  px: 2,
+                }}
+              >
+                <FolderIcon sx={{ fontSize: 64, color: '#B0B0B0', mb: 2 }} />
+                <Typography variant="h6" sx={{ color: '#FFFFFF', mb: 1, fontWeight: 500 }}>
+                  No courses yet
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#B0B0B0', mb: 3 }}>
+                  Create your first course to get started
+                </Typography>
+              </Box>
+            </Grid>
+          )}
+        </Grid>
+      </Container>
+
+      <Dialog 
+        open={createDialogOpen} 
+        onClose={() => setCreateDialogOpen(false)} 
+        maxWidth="sm" 
+        fullWidth
+        PaperProps={{
+          sx: {
+            backgroundColor: '#242424',
+            border: '1px solid #333333',
+          }
+        }}
+      >
+        <DialogTitle sx={{ color: '#FFFFFF', fontWeight: 600 }}>Create New Course</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -206,20 +236,25 @@ const CoursesDashboard = () => {
             sx={{ mt: 2 }}
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setCreateDialogOpen(false)} disabled={creating}>
+        <DialogActions sx={{ p: 2 }}>
+          <Button 
+            onClick={() => setCreateDialogOpen(false)} 
+            disabled={creating}
+            sx={{ color: '#FFFFFF' }}
+          >
             Cancel
           </Button>
           <Button
             onClick={handleCreateCourse}
             variant="contained"
             disabled={!newCourseName.trim() || creating}
+            sx={{ borderRadius: 2 }}
           >
             {creating ? <CircularProgress size={20} /> : 'Create'}
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+    </Box>
   );
 };
 

@@ -21,6 +21,7 @@ const AppContent = () => {
         flexDirection: 'column',
         minHeight: '100vh',
         width: '100%',
+        backgroundColor: '#1A1A1A',
       }}
     >
       <CssBaseline />
