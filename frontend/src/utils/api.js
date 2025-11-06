@@ -107,5 +107,10 @@ export const deleteQuiz = async (id) => {
   return response.data;
 };
 
+export const generateQuiz = async (data) => {
+  const response = await api.post('/generate', data);
+  return response.data;
+};
+
 export default api;
 
