@@ -21,17 +21,39 @@ router.use(authenticateToken);
 router.get('/', async (req, res) => {
   try {
     const userId = req.user.id;
+    
+    // Handle course_id parameter - convert empty strings to undefined
+    let courseId = req.query.course_id;
+    if (courseId === '' || courseId === null) {
+      courseId = undefined;
+    }
+    
+    // Validate UUID format if course_id is provided
+    if (courseId !== undefined) {
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(courseId)) {
+        console.error('Invalid course_id format:', courseId);
+        return res.status(400).json({
+          error: 'Validation error',
+          message: 'Invalid course_id format. Must be a valid UUID.'
+        });
+      }
+    }
+    
     const options = {
       limit: req.query.limit ? parseInt(req.query.limit) : undefined,
       offset: req.query.offset ? parseInt(req.query.offset) : undefined,
       orderBy: req.query.orderBy || 'created_at',
       orderDirection: req.query.orderDirection || 'desc',
-      courseId: req.query.course_id || undefined
+      courseId: courseId
     };
 
+    console.log('Fetching quizzes for user:', userId, 'with options:', options);
     const { data, error } = await getUserQuizzes(userId, options);
 
     if (error) {
+      console.error('Error fetching quizzes:', error);
+      console.error('User ID:', userId, 'Options:', options);
       return res.status(400).json({
         error: 'Failed to fetch quizzes',
         message: error
@@ -45,6 +67,7 @@ router.get('/', async (req, res) => {
     });
   } catch (error) {
     console.error('Get quizzes error:', error);
+    console.error('Error stack:', error.stack);
     return res.status(500).json({
       error: 'Internal server error',
       message: 'Failed to fetch quizzes'
