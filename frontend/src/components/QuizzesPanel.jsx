@@ -115,7 +115,7 @@ const QuizzesPanel = ({ courseId }) => {
                 },
               }}
               onClick={() => {
-                // Navigate to quiz detail if needed
+                navigate(`/quiz/${quiz.id}`);
               }}
               secondaryAction={
                 <IconButton

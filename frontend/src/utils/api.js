@@ -112,5 +112,11 @@ export const generateQuiz = async (data) => {
   return response.data;
 };
 
+// Quiz submission API function
+export const submitQuiz = async (quizId, answers) => {
+  const response = await api.post('/submit', { quizId, answers });
+  return response.data;
+};
+
 export default api;
 

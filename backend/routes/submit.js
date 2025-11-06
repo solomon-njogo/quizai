@@ -1,6 +1,6 @@
 import express from 'express';
 import { authenticateToken } from '../middleware/auth.js';
-import { getQuiz } from '../services/quizStorage.js';
+import { getQuiz, createQuizAttempt } from '../services/quizStorage.js';
 
 const router = express.Router();
 
@@ -92,12 +92,29 @@ router.post('/', async (req, res) => {
     const total = quiz.questions.length;
     const percentage = total > 0 ? Math.round((score / total) * 100 * 100) / 100 : 0;
 
+    // Save quiz attempt to database
+    const { data: attempt, error: attemptError } = await createQuizAttempt(
+      userId,
+      quizId,
+      score,
+      total,
+      percentage,
+      answers,
+      results
+    );
+
+    if (attemptError) {
+      console.error('Error saving quiz attempt:', attemptError);
+      // Still return results even if saving fails
+    }
+
     return res.json({
       success: true,
       score: score,
       total: total,
       percentage: percentage,
-      results: results
+      results: results,
+      attempt: attempt || null
     });
   } catch (error) {
     console.error('Submit quiz error:', error);

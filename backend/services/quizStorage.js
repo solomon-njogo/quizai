@@ -274,3 +274,72 @@ export async function deleteQuiz(quizId, userId) {
   }
 }
 
+/**
+ * Create a quiz attempt record
+ * @param {string} userId - User ID
+ * @param {string} quizId - Quiz ID
+ * @param {number} score - Number of correct answers
+ * @param {number} totalQuestions - Total number of questions
+ * @param {number} percentage - Percentage score
+ * @param {Array} answers - Array of selected answers (answer indices)
+ * @param {Array} results - Array of result objects with question details
+ * @returns {Promise<{data: Object|null, error: string|null}>}
+ */
+export async function createQuizAttempt(userId, quizId, score, totalQuestions, percentage, answers, results) {
+  try {
+    if (!userId || !quizId || score === undefined || !totalQuestions || percentage === undefined || !answers || !results) {
+      return {
+        data: null,
+        error: 'Missing required fields: userId, quizId, score, totalQuestions, percentage, answers, and results are required'
+      };
+    }
+
+    // Get quiz to retrieve course_id if it exists
+    const { data: quiz, error: quizError } = await supabase
+      .from('quizzes')
+      .select('course_id')
+      .eq('id', quizId)
+      .single();
+
+    if (quizError) {
+      return {
+        data: null,
+        error: `Failed to fetch quiz: ${quizError.message}`
+      };
+    }
+
+    const insertData = {
+      user_id: userId,
+      quiz_id: quizId,
+      score: score,
+      total_questions: totalQuestions,
+      percentage: percentage,
+      answers: answers,
+      results: results,
+    };
+
+    // Add course_id if the quiz has one
+    if (quiz.course_id) {
+      insertData.course_id = quiz.course_id;
+    }
+
+    const { data, error } = await supabase
+      .from('quiz_attempts')
+      .insert(insertData)
+      .select()
+      .single();
+
+    if (error) {
+      return { data: null, error: error.message };
+    }
+
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error creating quiz attempt:', error);
+    return {
+      data: null,
+      error: `Failed to create quiz attempt: ${error.message}`
+    };
+  }
+}
+
