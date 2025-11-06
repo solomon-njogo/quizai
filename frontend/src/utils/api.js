@@ -46,5 +46,46 @@ api.interceptors.response.use(
 // API endpoints
 export const healthCheck = () => api.get('/api/health');
 
+// Course Materials API
+export const getCourseMaterials = (params = {}) => {
+  const queryParams = new URLSearchParams();
+  if (params.limit) queryParams.append('limit', params.limit);
+  if (params.offset) queryParams.append('offset', params.offset);
+  if (params.orderBy) queryParams.append('orderBy', params.orderBy);
+  if (params.orderDirection) queryParams.append('orderDirection', params.orderDirection);
+  
+  const queryString = queryParams.toString();
+  return api.get(`/api/course-materials${queryString ? `?${queryString}` : ''}`);
+};
+
+export const getCourseMaterial = (id) => api.get(`/api/course-materials/${id}`);
+
+export const getCourseMaterialDownloadUrl = (id, expiresIn = 3600) => 
+  api.get(`/api/course-materials/${id}/download?expiresIn=${expiresIn}`);
+
+export const updateCourseMaterial = (id, data) => 
+  api.put(`/api/course-materials/${id}`, data);
+
+export const deleteCourseMaterial = (id) => 
+  api.delete(`/api/course-materials/${id}`);
+
+// File Upload API (for course materials)
+export const uploadFile = (file, onUploadProgress) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  return api.post('/api/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    onUploadProgress: (progressEvent) => {
+      if (onUploadProgress && progressEvent.total) {
+        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        onUploadProgress(percentCompleted);
+      }
+    },
+  });
+};
+
 // Export the api instance for custom requests
 export default api;

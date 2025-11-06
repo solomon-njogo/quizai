@@ -1,8 +1,14 @@
-import { Container, Typography, Box, Paper } from '@mui/material';
+import { Container, Typography, Box, Paper, Button, Grid } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import {
+  CloudUpload as CloudUploadIcon,
+  Folder as FolderIcon,
+} from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 
 const Home = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <Box
@@ -95,13 +101,45 @@ const Home = () => {
                 variant="body2"
                 sx={{
                   color: '#6B7280',
-                  mt: 2,
+                  mb: 3,
                   fontSize: { xs: '0.875rem', sm: '1rem' },
                   px: { xs: 1, sm: 0 },
                 }}
               >
-                Ready to create your first quiz? Upload a document to get started!
+                Manage your course materials and create AI-powered quizzes
               </Typography>
+              <Grid container spacing={2} sx={{ mt: 1 }}>
+                <Grid item xs={12} sm={6}>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    startIcon={<FolderIcon />}
+                    onClick={() => navigate('/course-materials')}
+                    sx={{
+                      borderRadius: 2,
+                      py: 1.5,
+                      fontSize: { xs: '0.875rem', sm: '1rem' },
+                    }}
+                  >
+                    View Course Materials
+                  </Button>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    startIcon={<CloudUploadIcon />}
+                    onClick={() => navigate('/course-materials')}
+                    sx={{
+                      borderRadius: 2,
+                      py: 1.5,
+                      fontSize: { xs: '0.875rem', sm: '1rem' },
+                    }}
+                  >
+                    Upload Material
+                  </Button>
+                </Grid>
+              </Grid>
             </Box>
           )}
         </Paper>
