@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { authenticateToken } from './middleware/auth.js';
 
 dotenv.config();
 
@@ -12,13 +13,23 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// Public Routes
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'QuizAI Backend is running' });
 });
 
+// Protected Routes (require authentication)
+app.get('/api/auth/me', authenticateToken, (req, res) => {
+  res.json({
+    user: {
+      id: req.user.id,
+      email: req.user.email,
+      created_at: req.user.created_at
+    }
+  });
+});
+
 // Placeholder routes
-// TODO: Implement auth routes (Supabase Auth integration)
 // TODO: Implement file upload routes
 // TODO: Implement quiz generation routes (OpenRouter API)
 // TODO: Implement quiz CRUD routes

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { supabase } from './supabase.js';
 
 // Get API base URL from environment variable
 // In development, Vite proxy will handle /api requests
@@ -15,11 +16,11 @@ const api = axios.create({
 
 // Request interceptor for adding auth tokens if needed
 api.interceptors.request.use(
-  (config) => {
-    // Add auth token if available in localStorage
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+  async (config) => {
+    // Get current session from Supabase
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.access_token) {
+      config.headers.Authorization = `Bearer ${session.access_token}`;
     }
     return config;
   },
@@ -31,12 +32,12 @@ api.interceptors.request.use(
 // Response interceptor for error handling
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     // Handle common errors
     if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
-      localStorage.removeItem('authToken');
-      // You can add redirect logic here if needed
+      // Unauthorized - sign out user
+      await supabase.auth.signOut();
+      // Redirect to login will be handled by ProtectedRoute component
     }
     return Promise.reject(error);
   }
