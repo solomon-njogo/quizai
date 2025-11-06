@@ -11,6 +11,8 @@ Run these SQL files in the following order in your Supabase SQL Editor:
 3. **03_quizzes.sql** - Quizzes table
 4. **04_quiz_attempts.sql** - Quiz attempts table
 5. **05_course_materials.sql** - Course materials table
+6. **07_extracted_texts.sql** - Extracted texts table (depends on course_materials)
+7. **08_backfill_extracted_texts.sql** - Migration to backfill existing course materials (run after 07_extracted_texts.sql if you have existing data)
 
 ## File Descriptions
 
@@ -19,6 +21,8 @@ Run these SQL files in the following order in your Supabase SQL Editor:
 - **03_quizzes.sql**: Defines the quizzes table with RLS policies, triggers, and course relationship
 - **04_quiz_attempts.sql**: Defines the quiz_attempts table for storing quiz results/history
 - **05_course_materials.sql**: Defines the course_materials table with RLS policies, triggers, and course relationship
+- **07_extracted_texts.sql**: Defines the extracted_texts table for storing extracted text separately from course_materials, with one-to-one relationship and RLS policies
+- **08_backfill_extracted_texts.sql**: Migration script to backfill existing course_materials data into the extracted_texts table (only needed if you have existing course materials with extracted_text)
 
 ## Notes
 

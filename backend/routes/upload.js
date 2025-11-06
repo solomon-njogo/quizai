@@ -4,6 +4,7 @@ import { authenticateToken } from '../middleware/auth.js';
 import { extractText, cleanupFile } from '../services/fileParser.js';
 import { uploadFileToStorage } from '../services/courseMaterialStorage.js';
 import { createCourseMaterial } from '../services/courseMaterialService.js';
+import { createExtractedText } from '../services/extractedTextService.js';
 import path from 'path';
 
 const router = express.Router();
@@ -58,7 +59,7 @@ router.post(
       const accessToken = authHeader ? authHeader.substring(7) : null; // Remove 'Bearer ' prefix
 
       // Extract text from file before uploading to storage
-      const { text, error: extractionError } = await extractText(filePath, mimeType);
+      const { text, extractionMethod, error: extractionError } = await extractText(filePath, mimeType);
 
       // Check for extraction errors
       if (extractionError) {
@@ -90,6 +91,7 @@ router.post(
       }
 
       // Store metadata in database (pass access token for RLS)
+      // Keep extracted_text in course_materials for backward compatibility
       const { data: materialData, error: dbError } = await createCourseMaterial(
         userId,
         {
@@ -119,6 +121,22 @@ router.post(
         });
       }
 
+      // Store extracted text in separate table
+      const { data: extractedTextData, error: extractedTextError } = await createExtractedText(
+        materialData.id,
+        userId,
+        text,
+        extractionMethod,
+        accessToken
+      );
+
+      if (extractedTextError) {
+        // Log error but don't fail the request since material was created successfully
+        // and text is already stored in course_materials.extracted_text
+        console.error('Error storing extracted text in separate table:', extractedTextError);
+        // Continue with response - the text is still available in course_materials
+      }
+
       // Return extracted text and material info
       return res.json({
         success: true,
@@ -127,7 +145,8 @@ router.post(
         fileSize: fileSize,
         materialId: materialData.id,
         storagePath: storageData.storagePath,
-        createdAt: materialData.created_at
+        createdAt: materialData.created_at,
+        extractedTextId: extractedTextData?.id || null
       });
     } catch (error) {
       console.error('Upload route error:', error);

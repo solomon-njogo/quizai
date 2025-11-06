@@ -7,31 +7,39 @@ import path from 'path';
  * Extract text from a file based on its MIME type
  * @param {string} filePath - Path to the uploaded file
  * @param {string} mimeType - MIME type of the file
- * @returns {Promise<{text: string, error?: string}>}
+ * @returns {Promise<{text: string, extractionMethod?: string, error?: string}>}
  */
 export async function extractText(filePath, mimeType) {
   try {
     let text = '';
+    let extractionMethod = '';
 
     // Determine file type and extract text accordingly
     if (mimeType === 'application/pdf') {
       text = await extractFromPDF(filePath);
+      extractionMethod = 'pdf-parse';
     } else if (mimeType === 'text/plain') {
       text = await extractFromTXT(filePath);
+      extractionMethod = 'fs.readFile';
     } else if (mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
       text = await extractFromDOCX(filePath);
+      extractionMethod = 'mammoth';
     } else {
       // Check by file extension as fallback
       const ext = path.extname(filePath).toLowerCase();
       if (ext === '.pdf') {
         text = await extractFromPDF(filePath);
+        extractionMethod = 'pdf-parse';
       } else if (ext === '.txt') {
         text = await extractFromTXT(filePath);
+        extractionMethod = 'fs.readFile';
       } else if (ext === '.docx') {
         text = await extractFromDOCX(filePath);
+        extractionMethod = 'mammoth';
       } else {
         return {
           text: '',
+          extractionMethod: '',
           error: 'Unsupported file type. Only PDF, TXT, and DOCX files are supported.'
         };
       }
@@ -43,15 +51,17 @@ export async function extractText(filePath, mimeType) {
     if (!text || text.trim().length === 0) {
       return {
         text: '',
+        extractionMethod: extractionMethod,
         error: 'No text content could be extracted from the file.'
       };
     }
 
-    return { text };
+    return { text, extractionMethod };
   } catch (error) {
     console.error('Error extracting text:', error);
     return {
       text: '',
+      extractionMethod: '',
       error: `Failed to extract text: ${error.message}`
     };
   }
