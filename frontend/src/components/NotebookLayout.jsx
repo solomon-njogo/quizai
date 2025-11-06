@@ -1,18 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Box, AppBar, Toolbar, Typography, Avatar, Button, IconButton, useMediaQuery, useTheme } from '@mui/material';
-import {
-  ChevronLeft as ChevronLeftIcon,
-  ChevronRight as ChevronRightIcon,
-} from '@mui/icons-material';
+import { Box, AppBar, Toolbar, Typography, Avatar, Button, useMediaQuery, useTheme } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 import CourseMaterialsPanel from './CourseMaterialsPanel';
 import QuizzesPanel from './QuizzesPanel';
+import CollapsibleTab from './CollapsibleTab';
 
 const NotebookLayout = () => {
   const { user, logout } = useAuth();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(isMobile);
+  const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false);
 
   useEffect(() => {
     // On mobile, start with panel collapsed; on desktop, start expanded
@@ -21,10 +19,6 @@ const NotebookLayout = () => {
 
   const handleLogout = async () => {
     await logout();
-  };
-
-  const toggleLeftPanel = () => {
-    setLeftPanelCollapsed(!leftPanelCollapsed);
   };
 
   return (
@@ -106,101 +100,48 @@ const NotebookLayout = () => {
           position: 'relative',
         }}
       >
-        {/* Left Panel - Course Materials */}
-        <Box
-          sx={{
-            width: leftPanelCollapsed ? 0 : { xs: '100%', sm: '100%', md: '320px' },
-            minWidth: leftPanelCollapsed ? 0 : { xs: '100%', sm: '100%', md: '320px' },
-            maxWidth: leftPanelCollapsed ? 0 : { xs: '100%', sm: '100%', md: '320px' },
-            display: { xs: leftPanelCollapsed ? 'none' : 'flex', sm: leftPanelCollapsed ? 'none' : 'flex', md: 'flex' },
-            flexDirection: 'column',
-            borderRight: { xs: 'none', sm: 'none', md: '1px solid #333333' },
-            backgroundColor: '#242424',
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            overflow: 'hidden',
-            position: { xs: 'absolute', sm: 'absolute', md: 'relative' },
-            zIndex: { xs: 10, sm: 10, md: 1 },
-            height: { xs: '100%', sm: '100%', md: 'auto' },
-            boxShadow: { xs: leftPanelCollapsed ? 'none' : '2px 0 8px rgba(0,0,0,0.3)', sm: leftPanelCollapsed ? 'none' : '2px 0 8px rgba(0,0,0,0.3)', md: 'none' },
-          }}
+        {/* Left Panel - Course Materials (Collapsible Tab) */}
+        <CollapsibleTab
+          title="Sources"
+          position="left"
+          defaultCollapsed={isMobile}
+          width={320}
+          collapsedWidth={48}
+          onToggle={(collapsed) => setLeftPanelCollapsed(collapsed)}
         >
-          <CourseMaterialsPanel onClose={() => setLeftPanelCollapsed(true)} />
-        </Box>
+          <CourseMaterialsPanel />
+        </CollapsibleTab>
 
-        {/* Collapse/Expand Button */}
-        <IconButton
-          onClick={toggleLeftPanel}
-          sx={{
-            position: 'absolute',
-            left: leftPanelCollapsed ? 0 : { xs: 'auto', md: '320px' },
-            top: '50%',
-            transform: 'translateY(-50%)',
-            zIndex: 20,
-            backgroundColor: '#242424',
-            border: '1px solid #333333',
-            borderRadius: '0 8px 8px 0',
-            width: 24,
-            height: 48,
-            minWidth: 24,
-            padding: 0,
-            display: { xs: 'none', md: 'flex' },
-            color: '#FFFFFF',
-            '&:hover': {
-              backgroundColor: '#2A2A2A',
-              borderColor: '#4FC3F7',
-            },
-          }}
-        >
-          {leftPanelCollapsed ? (
-            <ChevronRightIcon sx={{ fontSize: 20 }} />
-          ) : (
-            <ChevronLeftIcon sx={{ fontSize: 20 }} />
-          )}
-        </IconButton>
-
-        {/* Right Panel - Quizzes */}
+        {/* Center Panel - Main Content (Quizzes) */}
         <Box
           sx={{
             flex: 1,
-            display: { xs: leftPanelCollapsed ? 'flex' : 'none', sm: leftPanelCollapsed ? 'flex' : 'none', md: 'flex' },
+            display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
             backgroundColor: '#1A1A1A',
             minWidth: 0,
+            position: 'relative',
           }}
         >
           <QuizzesPanel />
         </Box>
 
-        {/* Mobile toggle button to show course materials */}
-        {leftPanelCollapsed && (
-          <IconButton
-            onClick={toggleLeftPanel}
-            sx={{
-              position: 'absolute',
-              left: 8,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              zIndex: 20,
-              backgroundColor: '#242424',
-              border: '1px solid #333333',
-              borderRadius: '0 8px 8px 0',
-              width: 32,
-              height: 48,
-              minWidth: 32,
-              padding: 0,
-              display: { xs: 'flex', sm: 'flex', md: 'none' },
-              boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-              color: '#FFFFFF',
-              '&:hover': {
-                backgroundColor: '#2A2A2A',
-                borderColor: '#4FC3F7',
-              },
-            }}
-          >
-            <ChevronRightIcon sx={{ fontSize: 20 }} />
-          </IconButton>
-        )}
+        {/* Right Panel - Tools/Actions (Collapsible Tab) - Optional for future use */}
+        {/* <CollapsibleTab
+          title="Tools"
+          position="right"
+          defaultCollapsed={true}
+          width={280}
+          collapsedWidth={48}
+          onToggle={(collapsed) => setRightPanelCollapsed(collapsed)}
+        >
+          <Box sx={{ p: 2 }}>
+            <Typography variant="body2" sx={{ color: '#B0B0B0' }}>
+              Tools panel content
+            </Typography>
+          </Box>
+        </CollapsibleTab> */}
       </Box>
     </Box>
   );

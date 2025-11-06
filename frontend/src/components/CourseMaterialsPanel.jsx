@@ -83,10 +83,7 @@ const CourseMaterialsPanel = ({ courseId }) => {
 
   return (
     <Box sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h6" sx={{ color: '#FFFFFF', fontWeight: 600 }}>
-          Course Materials
-        </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 2 }}>
         <Button
           variant="outlined"
           component="label"
