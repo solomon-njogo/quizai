@@ -92,10 +92,15 @@ const FileUpload = ({ onUploadSuccess, onCancel }) => {
       }, 1500);
     } catch (err) {
       console.error('Upload error:', err);
-      setError(
-        err.response?.data?.message ||
-        'Failed to upload file. Please try again.'
-      );
+      console.error('Error response:', err.response?.data);
+      
+      // Extract error message from response
+      const errorMessage = err.response?.data?.message || 
+                          err.response?.data?.error || 
+                          err.message || 
+                          'Failed to upload file. Please try again.';
+      
+      setError(errorMessage);
       setUploadProgress(0);
     } finally {
       setUploading(false);

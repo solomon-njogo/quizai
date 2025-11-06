@@ -1,4 +1,4 @@
-import { supabase } from '../utils/supabase.js';
+import { supabaseAuth } from '../utils/supabase.js';
 
 /**
  * Middleware to verify JWT tokens from Supabase
@@ -18,8 +18,8 @@ export const authenticateToken = async (req, res, next) => {
 
     const token = authHeader.substring(7); // Remove 'Bearer ' prefix
 
-    // Verify token with Supabase
-    const { data: { user }, error } = await supabase.auth.getUser(token);
+    // Verify token with Supabase using anon key client (required for proper JWT verification)
+    const { data: { user }, error } = await supabaseAuth.auth.getUser(token);
 
     if (error || !user) {
       return res.status(401).json({ 

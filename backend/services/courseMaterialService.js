@@ -1,12 +1,46 @@
-import { supabase } from '../utils/supabase.js';
+import { supabase, supabaseAuth } from '../utils/supabase.js';
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+
+/**
+ * Create a Supabase client with user's JWT token for authenticated operations
+ * This allows RLS policies to work correctly by setting the user context
+ */
+function createAuthenticatedClient(accessToken) {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing Supabase environment variables');
+  }
+  
+  // Create client with anon key and set Authorization header for all requests
+  const client = createClient(supabaseUrl, supabaseAnonKey, {
+    global: {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    },
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+      detectSessionInUrl: false
+    }
+  });
+  
+  return client;
+}
 
 /**
  * Create a new course material record
  * @param {string} userId - User ID
  * @param {Object} materialData - Material data
+ * @param {string} accessToken - User's JWT access token (for RLS)
  * @returns {Promise<{data: Object|null, error: string|null}>}
  */
-export async function createCourseMaterial(userId, materialData) {
+export async function createCourseMaterial(userId, materialData, accessToken = null) {
   try {
     const { filename, originalFilename, filePath, fileSize, mimeType, extractedText } = materialData;
 
@@ -17,7 +51,10 @@ export async function createCourseMaterial(userId, materialData) {
       };
     }
 
-    const { data, error } = await supabase
+    // Use authenticated client if token is provided, otherwise fall back to service role
+    const client = accessToken ? createAuthenticatedClient(accessToken) : supabase;
+
+    const { data, error } = await client
       .from('course_materials')
       .insert({
         user_id: userId,

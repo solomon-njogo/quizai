@@ -13,22 +13,38 @@ const router = express.Router();
  * Upload a file to Supabase Storage, extract text content, and store metadata
  * Requires authentication
  */
+// Async error wrapper to catch errors in async route handlers
+const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
 router.post(
   '/',
   authenticateToken,
   upload.single('file'),
   handleUploadError,
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     let tempFilePath = null;
 
     try {
+      console.log('Upload request received');
+      console.log('Request file:', req.file ? 'File present' : 'No file');
+      console.log('Request user:', req.user ? `User ID: ${req.user.id}` : 'No user');
+      
       // Check if file was uploaded
       if (!req.file) {
+        console.log('No file in request');
         return res.status(400).json({
           error: 'No file uploaded',
           message: 'Please provide a file to upload'
         });
       }
+      
+      console.log('File details:', {
+        originalname: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size
+      });
 
       const filePath = req.file.path;
       tempFilePath = filePath; // Keep track for cleanup
@@ -36,6 +52,10 @@ router.post(
       const filename = req.file.originalname;
       const fileSize = req.file.size;
       const userId = req.user.id; // From authenticateToken middleware
+      
+      // Extract JWT token from Authorization header for database operations
+      const authHeader = req.headers.authorization;
+      const accessToken = authHeader ? authHeader.substring(7) : null; // Remove 'Bearer ' prefix
 
       // Extract text from file before uploading to storage
       const { text, error: extractionError } = await extractText(filePath, mimeType);
@@ -62,22 +82,26 @@ router.post(
       await cleanupFile(filePath);
       tempFilePath = null;
 
-      if (storageError) {
+      if (storageError || !storageData) {
         return res.status(500).json({
           error: 'Storage upload failed',
-          message: storageError
+          message: storageError || 'Failed to upload file to storage'
         });
       }
 
-      // Store metadata in database
-      const { data: materialData, error: dbError } = await createCourseMaterial(userId, {
-        filename: path.basename(storageData.storagePath),
-        originalFilename: filename,
-        filePath: storageData.storagePath,
-        fileSize: fileSize,
-        mimeType: mimeType,
-        extractedText: text
-      });
+      // Store metadata in database (pass access token for RLS)
+      const { data: materialData, error: dbError } = await createCourseMaterial(
+        userId,
+        {
+          filename: path.basename(storageData.storagePath),
+          originalFilename: filename,
+          filePath: storageData.storagePath,
+          fileSize: fileSize,
+          mimeType: mimeType,
+          extractedText: text
+        },
+        accessToken
+      );
 
       if (dbError) {
         // If database insert fails, we should ideally clean up the storage file
@@ -106,6 +130,7 @@ router.post(
       });
     } catch (error) {
       console.error('Upload route error:', error);
+      console.error('Error stack:', error.stack);
       
       // Clean up local file if it exists
       if (tempFilePath) {
@@ -114,10 +139,11 @@ router.post(
 
       return res.status(500).json({
         error: 'Internal server error',
-        message: 'Failed to process file upload'
+        message: error.message || 'Failed to process file upload',
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
       });
     }
-  }
+  })
 );
 
 export default router;

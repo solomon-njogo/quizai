@@ -188,6 +188,7 @@ Create `.env` files in both `backend` and `frontend` directories with the necess
 - `OPENROUTER_API_KEY`: Your OpenRouter API key
 - `SUPABASE_URL`: Your Supabase project URL
 - `SUPABASE_SERVICE_ROLE_KEY`: Your Supabase service role key (for server-side operations)
+- `SUPABASE_ANON_KEY`: Your Supabase anon/public key (for token verification - recommended)
 
 **Frontend `.env`:**
 
