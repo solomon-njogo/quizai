@@ -20,18 +20,15 @@ import {
   Avatar,
   Menu,
   MenuItem,
-  Chip,
   Select,
   FormControl,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import FolderIcon from '@mui/icons-material/Folder';
-import SettingsIcon from '@mui/icons-material/Settings';
-import AppsIcon from '@mui/icons-material/Apps';
-import DescriptionIcon from '@mui/icons-material/Description';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { getCourses, createCourse, deleteCourse } from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -47,6 +44,7 @@ const CoursesDashboard = () => {
   const [sortBy, setSortBy] = useState('recent');
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(null);
+  const [profileMenuAnchor, setProfileMenuAnchor] = useState(null);
 
   useEffect(() => {
     loadCourses();
@@ -134,6 +132,20 @@ const CoursesDashboard = () => {
     }
   };
 
+  const handleProfileMenuOpen = (event) => {
+    setProfileMenuAnchor(event.currentTarget);
+  };
+
+  const handleProfileMenuClose = () => {
+    setProfileMenuAnchor(null);
+  };
+
+  const handleLogout = async () => {
+    handleProfileMenuClose();
+    await logout();
+    navigate('/login');
+  };
+
   // Get formatted counts string for a course
   const getCountsString = (course) => {
     const sourcesCount = course.materials_count || 0;
@@ -195,36 +207,9 @@ const CoursesDashboard = () => {
             QuizAI
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
-            <Button
-              startIcon={<SettingsIcon />}
-              sx={{
-                color: '#FFFFFF',
-                textTransform: 'none',
-                '&:hover': {
-                  backgroundColor: 'rgba(79, 195, 247, 0.08)',
-                },
-              }}
-            >
-              Settings
-            </Button>
-            <Chip
-              label="PRO"
-              size="small"
-              sx={{
-                backgroundColor: '#4FC3F7',
-                color: '#1A1A1A',
-                fontWeight: 600,
-                fontSize: '0.75rem',
-              }}
-            />
-            <IconButton sx={{ color: '#FFFFFF' }}>
-              <AppsIcon />
-            </IconButton>
-            <IconButton sx={{ color: '#FFFFFF' }}>
-              <DescriptionIcon />
-            </IconButton>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Avatar
+              onClick={handleProfileMenuOpen}
               sx={{
                 width: { xs: 32, sm: 36 },
                 height: { xs: 32, sm: 36 },
@@ -233,6 +218,9 @@ const CoursesDashboard = () => {
                 fontWeight: 600,
                 color: '#FFFFFF',
                 cursor: 'pointer',
+                '&:hover': {
+                  opacity: 0.9,
+                },
               }}
             >
               {user?.email?.charAt(0).toUpperCase()}
@@ -607,6 +595,43 @@ const CoursesDashboard = () => {
           }}
         >
           Delete
+        </MenuItem>
+      </Menu>
+
+      {/* Profile Menu */}
+      <Menu
+        anchorEl={profileMenuAnchor}
+        open={Boolean(profileMenuAnchor)}
+        onClose={handleProfileMenuClose}
+        PaperProps={{
+          sx: {
+            backgroundColor: '#242424',
+            border: '1px solid #333333',
+            borderRadius: 2,
+            minWidth: 180,
+            mt: 1,
+          },
+        }}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        <MenuItem
+          onClick={handleLogout}
+          sx={{
+            color: '#FFFFFF',
+            '&:hover': {
+              backgroundColor: 'rgba(79, 195, 247, 0.08)',
+            },
+          }}
+        >
+          <LogoutIcon sx={{ mr: 1.5, fontSize: 20 }} />
+          Logout
         </MenuItem>
       </Menu>
 
