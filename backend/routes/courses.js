@@ -95,20 +95,29 @@ router.get('/:id', async (req, res) => {
  */
 router.post('/', async (req, res) => {
   try {
+    // Validate user is authenticated
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        error: 'Unauthorized',
+        message: 'User not authenticated'
+      });
+    }
+
     const userId = req.user.id;
     const { name } = req.body;
 
     // Validate required fields
-    if (!name) {
+    if (!name || !name.trim()) {
       return res.status(400).json({
         error: 'Validation error',
         message: 'Name is required'
       });
     }
 
-    const { data, error } = await createCourse(userId, name);
+    const { data, error } = await createCourse(userId, name.trim());
 
     if (error) {
+      console.error('Create course service error:', error);
       return res.status(400).json({
         error: 'Failed to create course',
         message: error
@@ -122,9 +131,10 @@ router.post('/', async (req, res) => {
     });
   } catch (error) {
     console.error('Create course error:', error);
+    console.error('Error stack:', error.stack);
     return res.status(500).json({
       error: 'Internal server error',
-      message: 'Failed to create course'
+      message: error.message || 'Failed to create course'
     });
   }
 });
