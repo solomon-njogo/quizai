@@ -5,6 +5,7 @@ import { authenticateToken } from './middleware/auth.js';
 import uploadRoutes from './routes/upload.js';
 import quizRoutes from './routes/quizzes.js';
 import submitRoutes from './routes/submit.js';
+import courseMaterialRoutes from './routes/courseMaterials.js';
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.get('/api/auth/me', authenticateToken, (req, res) => {
 app.use('/api/upload', uploadRoutes);
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/submit', submitRoutes);
+app.use('/api/course-materials', courseMaterialRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
