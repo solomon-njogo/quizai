@@ -1,0 +1,13 @@
+-- QuizAI Database Schema
+-- 
+-- This schema has been split into separate files for better maintainability.
+-- Please use the individual schema files in this directory instead:
+--
+-- Execution Order:
+-- 1. 01_functions.sql
+-- 2. 02_courses.sql
+-- 3. 03_quizzes.sql
+-- 4. 04_quiz_attempts.sql
+-- 5. 05_course_materials.sql
+--
+-- See README.md in this directory for more details.

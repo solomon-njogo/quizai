@@ -2,6 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { authenticateToken } from './middleware/auth.js';
+import uploadRoutes from './routes/upload.js';
+import quizRoutes from './routes/quizzes.js';
+import submitRoutes from './routes/submit.js';
+import courseMaterialRoutes from './routes/courseMaterials.js';
+import courseRoutes from './routes/courses.js';
 
 dotenv.config();
 
@@ -29,11 +34,31 @@ app.get('/api/auth/me', authenticateToken, (req, res) => {
   });
 });
 
-// Placeholder routes
-// TODO: Implement file upload routes
-// TODO: Implement quiz generation routes (OpenRouter API)
-// TODO: Implement quiz CRUD routes
-// TODO: Implement quiz submission routes
+// API Routes
+app.use('/api/upload', uploadRoutes);
+app.use('/api/quizzes', quizRoutes);
+app.use('/api/submit', submitRoutes);
+app.use('/api/course-materials', courseMaterialRoutes);
+app.use('/api/courses', courseRoutes);
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Global error handler:', err);
+  console.error('Error stack:', err.stack);
+  
+  res.status(err.status || 500).json({
+    error: err.message || 'Internal server error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    error: 'Not Found',
+    message: `Route ${req.method} ${req.path} not found`
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

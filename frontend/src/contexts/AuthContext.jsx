@@ -36,66 +36,18 @@ export const AuthProvider = ({ children }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signup = async (email, password) => {
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      return { data: null, error };
-    }
-  };
-
-  const login = async (email, password) => {
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      return { data: null, error };
-    }
-  };
-
-  const logout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      return { error: null };
-    } catch (error) {
-      return { error };
-    }
-  };
-
-  const resetPassword = async (email) => {
-    try {
-      const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      return { data: null, error };
-    }
+  const signOut = async () => {
+    await supabase.auth.signOut();
   };
 
   const value = {
     user,
     session,
     loading,
-    signup,
-    login,
-    logout,
-    resetPassword,
+    signOut,
+    isAuthenticated: !!user,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
