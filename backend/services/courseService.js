@@ -92,6 +92,7 @@ export async function getUserCourses(userId, options = {}) {
       };
     }
 
+    // First, get all courses
     let query = supabase
       .from('courses')
       .select('*')
@@ -110,13 +111,46 @@ export async function getUserCourses(userId, options = {}) {
       query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
     }
 
-    const { data, error } = await query;
+    const { data: courses, error } = await query;
 
     if (error) {
       return { data: null, error: error.message };
     }
 
-    return { data: data || [], error: null };
+    if (!courses || courses.length === 0) {
+      return { data: [], error: null };
+    }
+
+    // Get materials count for all courses in a single query
+    const courseIds = courses.map(course => course.id);
+    const { data: materialsData, error: materialsError } = await supabase
+      .from('course_materials')
+      .select('course_id')
+      .in('course_id', courseIds)
+      .eq('user_id', userId);
+
+    if (materialsError) {
+      console.error('Error fetching materials count:', materialsError);
+      // Continue with 0 counts if there's an error
+    }
+
+    // Count materials per course
+    const materialsCountMap = {};
+    if (materialsData) {
+      materialsData.forEach(material => {
+        if (material.course_id) {
+          materialsCountMap[material.course_id] = (materialsCountMap[material.course_id] || 0) + 1;
+        }
+      });
+    }
+
+    // Transform the data to include materials_count
+    const transformedData = courses.map(course => ({
+      ...course,
+      materials_count: materialsCountMap[course.id] || 0
+    }));
+
+    return { data: transformedData, error: null };
   } catch (error) {
     console.error('Error getting user courses:', error);
     return {

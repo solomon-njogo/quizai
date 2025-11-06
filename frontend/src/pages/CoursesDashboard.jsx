@@ -134,7 +134,7 @@ const CoursesDashboard = () => {
     }
   };
 
-  // Get source count for a course (placeholder - you may need to implement this)
+  // Get source count for a course
   const getSourceCount = (course) => {
     return course.materials_count || 0;
   };
