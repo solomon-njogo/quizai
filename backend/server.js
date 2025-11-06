@@ -2,6 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { authenticateToken } from './middleware/auth.js';
+import uploadRoutes from './routes/upload.js';
+import quizRoutes from './routes/quizzes.js';
+import submitRoutes from './routes/submit.js';
 
 dotenv.config();
 
@@ -29,11 +32,10 @@ app.get('/api/auth/me', authenticateToken, (req, res) => {
   });
 });
 
-// Placeholder routes
-// TODO: Implement file upload routes
-// TODO: Implement quiz generation routes (OpenRouter API)
-// TODO: Implement quiz CRUD routes
-// TODO: Implement quiz submission routes
+// API Routes
+app.use('/api/upload', uploadRoutes);
+app.use('/api/quizzes', quizRoutes);
+app.use('/api/submit', submitRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
