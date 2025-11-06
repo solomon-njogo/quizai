@@ -87,5 +87,25 @@ export const uploadFile = (file, onUploadProgress) => {
   });
 };
 
+// Quiz API
+export const getQuizzes = (params = {}) => {
+  const queryParams = new URLSearchParams();
+  if (params.limit) queryParams.append('limit', params.limit);
+  if (params.offset) queryParams.append('offset', params.offset);
+  if (params.orderBy) queryParams.append('orderBy', params.orderBy);
+  if (params.orderDirection) queryParams.append('orderDirection', params.orderDirection);
+  
+  const queryString = queryParams.toString();
+  return api.get(`/api/quizzes${queryString ? `?${queryString}` : ''}`);
+};
+
+export const getQuiz = (id) => api.get(`/api/quizzes/${id}`);
+
+export const createQuiz = (data) => api.post('/api/quizzes', data);
+
+export const updateQuiz = (id, data) => api.put(`/api/quizzes/${id}`, data);
+
+export const deleteQuiz = (id) => api.delete(`/api/quizzes/${id}`);
+
 // Export the api instance for custom requests
 export default api;
