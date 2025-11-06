@@ -129,11 +129,11 @@ The application follows a standard three-tier architecture: **Presentation (Reac
 
 | Phase                              | Duration | Focus Area                                                                           |
 | ---------------------------------- | -------- | ------------------------------------------------------------------------------------ |
-| **1. Setup and Planning**    | 1-2 days | Initialize React and Express projects, establish environment configuration           |
-| **2. Backend Development**   | 3-5 days | Implement Auth, File Handling, Database (CRUD for users/quizzes)                     |
-| **3. Frontend Development**  | 4-6 days | Build all core UI components, implement routing and state management for quiz-taking |
-| **4. Integration**           | 2-3 days | Connect Frontend to all Backend APIs, implement comprehensive error handling         |
-| **5. Deployment and Polish** | 1-2 days | Final styling (responsiveness), testing, and deployment setup                        |
+| **1. Setup and Planning**    | 1-2 weeks | Initialize React and Express projects, establish environment configuration           |
+| **2. Backend Development**   | 3-5 weeks | Implement Auth, File Handling, Database (CRUD for users/quizzes)                     |
+| **3. Frontend Development**  | 4-6 weeks | Build all core UI components, implement routing and state management for quiz-taking |
+| **4. Integration**           | 2-3 weeks | Connect Frontend to all Backend APIs, implement comprehensive error handling         |
+| **5. Testing and Polish** | 1-2 weeks | Final styling (responsiveness), testing, and refinement                        |
 
 ## Team Assignment
 
